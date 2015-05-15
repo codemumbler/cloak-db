@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class CloakedContext implements Context {
+class CloakedContext implements Context {
 
 	private Map<String, Object> contextMap = new HashMap<>();
 
