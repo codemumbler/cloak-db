@@ -44,4 +44,14 @@ class CloakJNDI {
 		}
 		return null;
 	}
+
+	public void unbind(String jndiName) {
+		try {
+			Context ctx = new InitialContext();
+			Context env = (Context) ctx.lookup(ENV_CONTEXT);
+			env.unbind(jndiName);
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+	}
 }

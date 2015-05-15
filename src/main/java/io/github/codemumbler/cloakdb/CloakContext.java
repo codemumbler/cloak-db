@@ -46,7 +46,7 @@ class CloakContext implements Context {
 
 	@Override
 	public void unbind(String name) throws NamingException {
-
+		contextMap.put(name, null);
 	}
 
 	@Override

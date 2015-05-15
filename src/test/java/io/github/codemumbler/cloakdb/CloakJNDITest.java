@@ -46,7 +46,14 @@ public class CloakJNDITest {
 	@Test
 	public void bindObject() throws NamingException {
 		final Object expected = new Object();
-		jndi.bind("jdbc/dbName", expected);
-		Assert.assertEquals(expected, jndi.lookup("jdbc/dbName"));
+		jndi.bind(DATABASE_JNDI_NAME, expected);
+		Assert.assertEquals(expected, jndi.lookup(DATABASE_JNDI_NAME));
+	}
+	
+	@Test
+	public void unbind() throws NamingException {
+		jndi.bind(DATABASE_JNDI_NAME, new Object());
+		jndi.unbind(DATABASE_JNDI_NAME);
+		Assert.assertNull(jndi.lookup(DATABASE_JNDI_NAME));
 	}
 }
