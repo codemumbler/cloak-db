@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-class CloakedContext implements Context {
+class CloakContext implements Context {
 
 	private Map<String, Object> contextMap = new HashMap<>();
 
@@ -96,7 +96,7 @@ class CloakedContext implements Context {
 
 	@Override
 	public Context createSubcontext(String name) throws NamingException {
-		Context context = new CloakedContext();
+		Context context = new CloakContext();
 		contextMap.put(name, context);
 		return context;
 	}

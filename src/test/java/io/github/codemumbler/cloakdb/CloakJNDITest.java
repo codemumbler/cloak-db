@@ -9,14 +9,14 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.NoInitialContextException;
 
-public class CloakedJNDITest {
+public class CloakJNDITest {
 
 	public static final String DATABASE_JNDI_NAME = "jdbc/dbName";
-	private CloakedJNDI jndi;
+	private CloakJNDI jndi;
 
 	@Before
 	public void setUp() {
-		jndi = new CloakedJNDI();
+		jndi = new CloakJNDI();
 	}
 
 	@Test

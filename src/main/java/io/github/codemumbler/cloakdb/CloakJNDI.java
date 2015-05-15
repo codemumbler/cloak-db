@@ -4,16 +4,16 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-class CloakedJNDI {
+class CloakJNDI {
 
-	private static final String CONTEXT_FACTORY = CloakedContextFactory.class.getCanonicalName();
+	private static final String CONTEXT_FACTORY = CloakContextFactory.class.getCanonicalName();
 	public static final String ENV_CONTEXT = "java:/comp/env";
 
 	static {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CONTEXT_FACTORY);
 	}
 
-	CloakedJNDI(){
+	CloakJNDI(){
 		try {
 			InitialContext ic = new InitialContext();
 			if (ic.lookup(ENV_CONTEXT) == null) {

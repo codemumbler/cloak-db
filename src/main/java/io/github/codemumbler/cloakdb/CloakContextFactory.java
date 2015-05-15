@@ -5,9 +5,9 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import java.util.Hashtable;
 
-public class CloakedContextFactory implements InitialContextFactory {
+public class CloakContextFactory implements InitialContextFactory {
 
-	private static final Context context = new CloakedContext();
+	private static final Context context = new CloakContext();
 
 	@Override
 	public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
