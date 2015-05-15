@@ -7,7 +7,6 @@ import org.junit.Test;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.NoInitialContextException;
 
 public class CloakJNDITest {
 
@@ -20,12 +19,8 @@ public class CloakJNDITest {
 	}
 
 	@Test
-	public void createInitialContext() throws NamingException {
-		try {
-			new InitialContext();
-		} catch ( NoInitialContextException e ) {
-			Assert.fail("ContextFactory is not set up correctly: " + e.getMessage());
-		}
+	public void setInitialContextFactory() throws NamingException {
+		Assert.assertEquals(CloakContextFactory.class.getCanonicalName(), System.getProperty(Context.INITIAL_CONTEXT_FACTORY));
 	}
 
 	@Test

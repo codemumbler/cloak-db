@@ -8,6 +8,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLSyntaxErrorException;
+import java.sql.Statement;
 
 public class CloakDataBaseTest {
 
@@ -19,10 +22,8 @@ public class CloakDataBaseTest {
 	}
 
 	@Test
-	public void initializeDBContext() throws NamingException {
-		Context initialContext = new InitialContext();
-		Context envContext = (Context) initialContext.lookup("java:/comp/env");
-		Assert.assertNotNull(envContext.lookup("jdbc/app_db"));
+	public void initializeDBContext() throws Exception {
+		Assert.assertNotNull(lookupDataSource());
 	}
 
 	@Test
@@ -31,9 +32,46 @@ public class CloakDataBaseTest {
 	}
 
 	@Test
-	public void canLookupDataSource() throws NamingException {
+	public void canLookupDataSource() throws Exception {
+		Assert.assertEquals(dataBase.getDataSource(), lookupDataSource());
+	}
+
+	@Test(expected = SQLSyntaxErrorException.class)
+	public void resetDatabaseAfterTest() throws Exception {
+		addTable();
+		dataBase.reset();
+		queryTable();
+		Assert.fail("Should have thrown an exception for a missing table");
+	}
+
+	@Test
+	public void afterResetCanUseDataSource() throws Exception {
+		dataBase.reset();
+		Assert.assertTrue(addTable());
+	}
+
+	private DataSource lookupDataSource() throws Exception {
 		Context initialContext = new InitialContext();
 		Context envContext = (Context) initialContext.lookup("java:/comp/env");
-		Assert.assertEquals(dataBase.getDataSource(), envContext.lookup("jdbc/app_db"));
+		return (DataSource) envContext.lookup("jdbc/app_db");
+	}
+
+	private void queryTable() throws Exception {
+		try (Connection connection = lookupDataSource().getConnection();
+			Statement statement = connection.createStatement()) {
+			statement.executeQuery("SELECT * FROM test_table");
+		} catch (SQLSyntaxErrorException e){
+			throw e;
+		}
+	}
+
+	private boolean addTable() throws Exception {
+		try (Connection connection = lookupDataSource().getConnection();
+			Statement statement = connection.createStatement()) {
+			statement.executeUpdate("CREATE TABLE test_table ( id INT NOT NULL )");
+		} catch (Exception e) {
+			throw e;
+		}
+		return true;
 	}
 }
