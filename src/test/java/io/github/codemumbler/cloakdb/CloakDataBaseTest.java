@@ -33,11 +33,6 @@ public class CloakDataBaseTest {
 	}
 
 	@Test
-	public void dbDataSource() {
-		Assert.assertTrue(dataBase.getDataSource() instanceof DataSource);
-	}
-
-	@Test
 	public void canLookupDataSource() throws Exception {
 		Assert.assertEquals(dataBase.getDataSource(), lookupDataSource());
 	}

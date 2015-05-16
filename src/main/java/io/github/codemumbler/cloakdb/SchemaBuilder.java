@@ -11,16 +11,16 @@ class SchemaBuilder {
 	private final DataSource dataSource;
 	private final Dialect dialect;
 
-	public SchemaBuilder(DataSource dataSource) {
-		this(dataSource, new DerbyDialect());
+	SchemaBuilder(DataSource dataSource) {
+		this(dataSource, new HSQLDBDialect());
 	}
 
-	public SchemaBuilder(DataSource dataSource, Dialect dialect) {
+	SchemaBuilder(DataSource dataSource, Dialect dialect) {
 		this.dataSource = dataSource;
 		this.dialect = dialect;
 	}
 
-	public void executeScript(String sqlScript) {
+	void executeScript(String sqlScript) {
 		sqlScript = dialect.prepareSQL(sqlScript);
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {

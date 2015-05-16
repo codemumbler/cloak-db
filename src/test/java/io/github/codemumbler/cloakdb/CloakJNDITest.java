@@ -6,11 +6,10 @@ import org.junit.Test;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 public class CloakJNDITest {
 
-	public static final String DATABASE_JNDI_NAME = "jdbc/dbName";
+	private static final String DATABASE_JNDI_NAME = "jdbc/dbName";
 	private CloakJNDI jndi;
 
 	@Before
@@ -19,18 +18,18 @@ public class CloakJNDITest {
 	}
 
 	@Test
-	public void setInitialContextFactory() throws NamingException {
+	public void setInitialContextFactory() {
 		Assert.assertEquals(CloakContextFactory.class.getCanonicalName(), System.getProperty(Context.INITIAL_CONTEXT_FACTORY));
 	}
 
 	@Test
-	public void setEnvContext() throws NamingException {
+	public void setEnvContext() throws Exception {
 		InitialContext context = new InitialContext();
 		Assert.assertNotNull(context.lookup("java:/comp/env"));
 	}
 
 	@Test
-	public void lookupInEnvContext() throws NamingException {
+	public void lookupInEnvContext() throws Exception {
 		InitialContext context = new InitialContext();
 		Context env = (Context) context.lookup("java:/comp/env");
 		final Object expected = new Object();
@@ -39,14 +38,14 @@ public class CloakJNDITest {
 	}
 
 	@Test
-	public void bindObject() throws NamingException {
+	public void bindObject() {
 		final Object expected = new Object();
 		jndi.bind(DATABASE_JNDI_NAME, expected);
 		Assert.assertEquals(expected, jndi.lookup(DATABASE_JNDI_NAME));
 	}
 	
 	@Test
-	public void unbind() throws NamingException {
+	public void unbind() {
 		jndi.bind(DATABASE_JNDI_NAME, new Object());
 		jndi.unbind(DATABASE_JNDI_NAME);
 		Assert.assertNull(jndi.lookup(DATABASE_JNDI_NAME));

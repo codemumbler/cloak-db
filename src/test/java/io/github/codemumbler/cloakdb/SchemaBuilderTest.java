@@ -51,7 +51,7 @@ public class SchemaBuilderTest {
 	}
 
 	@Test(expected = CloakDBException.class)
-	public void badSQLStatement() throws Exception {
+	public void badSQLStatement() {
 		schemaBuilder.executeScript("CREATE UNKNOWN object;");
 	}
 
