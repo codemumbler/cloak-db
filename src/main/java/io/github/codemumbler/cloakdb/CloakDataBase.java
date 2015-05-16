@@ -11,6 +11,7 @@ public class CloakDataBase {
 
 	public static final int HSQLDB = 0;
 	public static final int ORACLE = 1;
+	private static final String DROP_SCHEMA = "DROP SCHEMA PUBLIC CASCADE";
 
 	private final String jndiName;
 	private final CloakJNDI jndi;
@@ -76,7 +77,7 @@ public class CloakDataBase {
 		JDBCDataSource dataSource = (JDBCDataSource) getDataSource();
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()){
-			statement.execute("DROP SCHEMA PUBLIC CASCADE");
+			statement.execute(DROP_SCHEMA);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

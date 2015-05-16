@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 class CloakJNDI {
 
 	private static final String CONTEXT_FACTORY = CloakContextFactory.class.getCanonicalName();
-	private static final String ENV_CONTEXT = "java:/comp/env";
+	private static final String DEFAULT_ENV_CONTEXT = "java:/comp/env";
 
 	static {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CONTEXT_FACTORY);
@@ -16,41 +16,41 @@ class CloakJNDI {
 	CloakJNDI(){
 		try {
 			InitialContext ic = new InitialContext();
-			if (ic.lookup(ENV_CONTEXT) == null) {
-				ic.createSubcontext(ENV_CONTEXT);
+			if (ic.lookup(DEFAULT_ENV_CONTEXT) == null) {
+				ic.createSubcontext(DEFAULT_ENV_CONTEXT);
 			}
 		} catch (NamingException e){
-			e.printStackTrace();
+			throw new CloakDBException("Failed to establish an InitialContext.");
 		}
 	}
 
-	public void bind(String jndiName, Object value) {
+	void bind(String jndiName, Object value) {
 		try {
 			Context ctx = new InitialContext();
-			Context env = (Context) ctx.lookup(ENV_CONTEXT);
+			Context env = (Context) ctx.lookup(DEFAULT_ENV_CONTEXT);
 			env.bind(jndiName, value);
 		} catch (NamingException e) {
-			e.printStackTrace();
+			throw new CloakDBException("Bind failed on JNDI name: " + jndiName);
 		}
 	}
 
-	public Object lookup(String jndiName) {
+	Object lookup(String jndiName) {
 		try {
 			Context ctx = new InitialContext();
-			Context env = (Context) ctx.lookup(ENV_CONTEXT);
+			Context env = (Context) ctx.lookup(DEFAULT_ENV_CONTEXT);
 			return env.lookup(jndiName);
-		} catch (NamingException ignored) {
+		} catch (NamingException e) {
+			throw new CloakDBException("Lookup failed for JNDI name: " + jndiName);
 		}
-		return null;
 	}
 
-	public void unbind(String jndiName) {
+	void unbind(String jndiName) {
 		try {
 			Context ctx = new InitialContext();
-			Context env = (Context) ctx.lookup(ENV_CONTEXT);
+			Context env = (Context) ctx.lookup(DEFAULT_ENV_CONTEXT);
 			env.unbind(jndiName);
 		} catch (NamingException e) {
-			e.printStackTrace();
+			throw new CloakDBException("Failed to unbind for JNDI name: " + jndiName);
 		}
 	}
 }
