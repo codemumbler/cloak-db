@@ -7,7 +7,7 @@ import java.util.Map;
 
 class CloakContext implements Context {
 
-	private Map<String, Object> contextMap = new HashMap<>();
+	private final Map<String, Object> contextMap = new HashMap<>();
 
 	@Override
 	public Object lookup(Name name) throws NamingException {

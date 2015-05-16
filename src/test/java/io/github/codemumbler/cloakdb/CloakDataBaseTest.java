@@ -44,6 +44,7 @@ public class CloakDataBaseTest {
 
 	@Test(expected = SQLSyntaxErrorException.class)
 	public void resetDatabaseAfterTest() throws Exception {
+		reinitializeDB(JDBC_APP_DB, "");
 		addTable();
 		dataBase.reset();
 		queryTable();
@@ -89,6 +90,14 @@ public class CloakDataBaseTest {
 	public void resetRestoresToOriginalSchema() throws Exception {
 		reinitializeDB(JDBC_APP_DB, SIMPLE_DB_SCHEMA);
 		dataBase.reset();
+		Assert.assertEquals(1, queryTable());
+	}
+
+	@Test
+	public void useOracleSQL() throws Exception {
+		dataBase.destroy();
+		dataBase = new CloakDataBase(JDBC_APP_DB, "CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
+				"INSERT INTO test_table(id) VALUES (1);", CloakDataBase.ORACLE);
 		Assert.assertEquals(1, queryTable());
 	}
 

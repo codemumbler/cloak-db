@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 class CloakJNDI {
 
 	private static final String CONTEXT_FACTORY = CloakContextFactory.class.getCanonicalName();
-	public static final String ENV_CONTEXT = "java:/comp/env";
+	private static final String ENV_CONTEXT = "java:/comp/env";
 
 	static {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CONTEXT_FACTORY);
@@ -38,9 +38,8 @@ class CloakJNDI {
 		try {
 			Context ctx = new InitialContext();
 			Context env = (Context) ctx.lookup(ENV_CONTEXT);
-			Object value = env.lookup(jndiName);
-			return value;
-		} catch (NamingException e) {
+			return env.lookup(jndiName);
+		} catch (NamingException ignored) {
 		}
 		return null;
 	}
