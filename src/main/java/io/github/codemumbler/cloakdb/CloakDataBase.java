@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CloakDataBase {
+public class CloakDatabase {
 
 	public static final int HSQLDB = 0;
 	public static final int ORACLE = 1;
@@ -18,15 +18,15 @@ public class CloakDataBase {
 	private final String initializationSQL;
 	private final int dialect;
 
-	public CloakDataBase(String jndiName) {
+	public CloakDatabase(String jndiName) {
 		this(jndiName, "", HSQLDB);
 	}
 
-	public CloakDataBase(String jndiName, String initializeSQL) {
+	public CloakDatabase(String jndiName, String initializeSQL) {
 		this(jndiName, initializeSQL, HSQLDB);
 	}
 
-	public CloakDataBase(String jndiName, String initializeSQL, int dialect) {
+	public CloakDatabase(String jndiName, String initializeSQL, int dialect) {
 		this.jndiName = jndiName;
 		this.jndi = new CloakJNDI();
 		this.dialect = dialect;

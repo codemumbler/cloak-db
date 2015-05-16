@@ -10,21 +10,21 @@ import java.sql.ResultSet;
 import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 
-public class CloakDataBaseTest {
+public class CloakDatabaseTest {
 
 	private static final String JDBC_APP_DB = "jdbc/app_db";
 	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL )";
 	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + ";\nINSERT INTO test_table(id) VALUES (1);";
-	private static CloakDataBase dataBase;
+	private static CloakDatabase database;
 
 	@BeforeClass
 	public static void setUpClass() {
-		dataBase = new CloakDataBase(JDBC_APP_DB);
+		database = new CloakDatabase(JDBC_APP_DB);
 	}
 
 	@After
 	public void tearDown() {
-		dataBase.reset();
+		database.reset();
 	}
 
 	@Test
@@ -34,14 +34,14 @@ public class CloakDataBaseTest {
 
 	@Test
 	public void canLookupDataSource() throws Exception {
-		Assert.assertEquals(dataBase.getDataSource(), lookupDataSource());
+		Assert.assertEquals(database.getDataSource(), lookupDataSource());
 	}
 
 	@Test(expected = SQLSyntaxErrorException.class)
 	public void resetDatabaseAfterTest() throws Exception {
 		reinitializeDB(JDBC_APP_DB, "");
 		addTable();
-		dataBase.reset();
+		database.reset();
 		queryTable();
 		Assert.fail("Should have thrown an exception for a missing table");
 	}
@@ -49,7 +49,7 @@ public class CloakDataBaseTest {
 	@Test
 	public void afterResetCanUseDataSource() throws Exception {
 		reinitializeDB(JDBC_APP_DB, "");
-		dataBase.reset();
+		database.reset();
 		Assert.assertTrue(addTable());
 	}
 
@@ -67,7 +67,7 @@ public class CloakDataBaseTest {
 
 	@Test(expected = CloakDBException.class)
 	public void newInstanceWithoutDestroyPrevious() throws Exception {
-		dataBase = new CloakDataBase(JDBC_APP_DB, SIMPLE_DB_SCHEMA.replaceAll("test_table", "test_table2"));
+		database = new CloakDatabase(JDBC_APP_DB, SIMPLE_DB_SCHEMA.replaceAll("test_table", "test_table2"));
 		try (Connection connection = lookupDataSource().getConnection();
 			 Statement statement = connection.createStatement()) {
 			ResultSet set = statement.executeQuery("SELECT * FROM test_table2");
@@ -76,29 +76,29 @@ public class CloakDataBaseTest {
 	}
 
 	@Test
-	public void destroyDataBase() throws Exception {
-		dataBase.destroy();
+	public void destroyDatabase() throws Exception {
+		database.destroy();
 		Assert.assertNull(lookupDataSource());
 	}
 
 	@Test
 	public void resetRestoresToOriginalSchema() throws Exception {
 		reinitializeDB(JDBC_APP_DB, SIMPLE_DB_SCHEMA);
-		dataBase.reset();
+		database.reset();
 		Assert.assertEquals(1, queryTable());
 	}
 
 	@Test
 	public void useOracleSQL() throws Exception {
-		dataBase.destroy();
-		dataBase = new CloakDataBase(JDBC_APP_DB, "CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
-				"INSERT INTO test_table(id) VALUES (1);", CloakDataBase.ORACLE);
+		database.destroy();
+		database = new CloakDatabase(JDBC_APP_DB, "CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
+				"INSERT INTO test_table(id) VALUES (1);", CloakDatabase.ORACLE);
 		Assert.assertEquals(1, queryTable());
 	}
 
 	private void reinitializeDB(String name, String SQL) {
-		dataBase.destroy();
-		dataBase = new CloakDataBase(name, SQL);
+		database.destroy();
+		database = new CloakDatabase(name, SQL);
 	}
 
 	private DataSource lookupDataSource() throws Exception {

@@ -17,12 +17,12 @@ public class SchemaBuilderTest {
 	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL )";
 	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + ";\nINSERT INTO test_table(id) VALUES (1);";
 
-	private static CloakDataBase db;
+	private static CloakDatabase db;
 	private SchemaBuilder schemaBuilder;
 
 	@BeforeClass
 	public static void setUpClass() {
-		db = new CloakDataBase(JDBC_APP_DB);
+		db = new CloakDatabase(JDBC_APP_DB);
 	}
 
 	@Before
