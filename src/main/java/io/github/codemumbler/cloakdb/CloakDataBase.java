@@ -3,6 +3,7 @@ package io.github.codemumbler.cloakdb;
 import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,6 +18,7 @@ public class CloakDatabase {
 	private final CloakJNDI jndi;
 	private final String initializationSQL;
 	private final int dialect;
+	private final File sqlFile;
 
 	public CloakDatabase(String jndiName) {
 		this(jndiName, "", HSQLDB);
@@ -27,29 +29,42 @@ public class CloakDatabase {
 	}
 
 	public CloakDatabase(String jndiName, String initializeSQL, int dialect) {
+		this(jndiName, dialect, initializeSQL, null);
+	}
+
+	public CloakDatabase(String jndiName, File file) {
+		this(jndiName, HSQLDB, "", file);
+	}
+
+	private CloakDatabase(String jndiName, int dialect, String initializationSQL, File sqlFile) {
 		this.jndiName = jndiName;
 		this.jndi = new CloakJNDI();
 		this.dialect = dialect;
-		this.initializationSQL = initializeSQL;
+		this.initializationSQL = initializationSQL;
+		this.sqlFile = sqlFile;
 		if ( jndi.lookup(this.jndiName) != null )
 			throw new CloakDBException("Database is already initialized. Please use destroy() first.");
 		initializeDatabase();
 	}
 
 	private void createSchema() {
+		if ( sqlFile == null && (initializationSQL == null || initializationSQL.isEmpty()) )
+			return;
 		SchemaBuilder schemaBuilder;
 		if ( dialect == ORACLE )
 			schemaBuilder = new SchemaBuilder(getDataSource(), new OracleDialect());
 		else
 			schemaBuilder = new SchemaBuilder(getDataSource());
-		schemaBuilder.executeScript(this.initializationSQL);
+		if ( sqlFile != null )
+			schemaBuilder.executeScript(this.sqlFile);
+		else
+			schemaBuilder.executeScript(this.initializationSQL);
 	}
 
 	private void initializeDatabase() {
 		if ( jndi.lookup(this.jndiName) == null ) {
 			jndi.bind(jndiName, getDataSource());
-			if (!initializationSQL.isEmpty())
-				createSchema();
+			createSchema();
 		}
 	}
 

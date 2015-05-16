@@ -5,6 +5,7 @@ import org.junit.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLSyntaxErrorException;
@@ -94,6 +95,14 @@ public class CloakDatabaseTest {
 		database = new CloakDatabase(JDBC_APP_DB, "CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
 				"INSERT INTO test_table(id) VALUES (1);", CloakDatabase.ORACLE);
 		Assert.assertEquals(1, queryTable());
+	}
+
+	@Test
+	public void useFileScript() throws Exception {
+		database.destroy();
+		database = new CloakDatabase(JDBC_APP_DB,
+				new File(getClass().getClassLoader().getResource("simple.sql").toURI()));
+		Assert.assertEquals(2, queryTable());
 	}
 
 	private void reinitializeDB(String name, String SQL) {

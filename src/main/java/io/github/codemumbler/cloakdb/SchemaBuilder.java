@@ -1,8 +1,11 @@
 package io.github.codemumbler.cloakdb;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Scanner;
 
 class SchemaBuilder {
 
@@ -31,6 +34,14 @@ class SchemaBuilder {
 			}
 		} catch (Exception e) {
 			throw new CloakDBException("Failed to execute SQL statement: " + e.getMessage());
+		}
+	}
+
+	void executeScript(File sqlFile) {
+		try {
+			executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 }
