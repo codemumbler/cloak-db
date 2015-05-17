@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -54,14 +53,25 @@ public class SchemaBuilderTest {
 
 	@Test
 	public void runCompleteDirectory() throws Exception {
-		schemaBuilder = new SchemaBuilder(db.getDataSource(), new HSQLDBDialect());
 		schemaBuilder.executeScript(new File(getClass().getClassLoader().getResource("db/migration").toURI()));
+		Assert.assertEquals(2, queryTable(db.getDataSource()));
+	}
+
+	@Test
+	public void runMultipleFiles() throws Exception {
+		schemaBuilder.executeScript(new File(getClass().getClassLoader().getResource("db/migration/V1_1__create_table.sql").toURI()),
+				new File(getClass().getClassLoader().getResource("db/migration/V1_2__insert_data.sql").toURI()));
 		Assert.assertEquals(2, queryTable(db.getDataSource()));
 	}
 
 	@Test(expected = CloakDBException.class)
 	public void badSQLStatement() {
 		schemaBuilder.executeScript("CREATE UNKNOWN object;");
+	}
+
+	@Test
+	public void nullFile() {
+		Assert.assertFalse(schemaBuilder.executeScript((File[]) null));
 	}
 
 	private int queryTable(DataSource dataSource) throws Exception {

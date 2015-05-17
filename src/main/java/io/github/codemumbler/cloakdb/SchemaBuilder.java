@@ -2,7 +2,6 @@ package io.github.codemumbler.cloakdb;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Scanner;
@@ -37,17 +36,22 @@ class SchemaBuilder {
 		}
 	}
 
-	void executeScript(File sqlFile) {
+	boolean executeScript(File ... sqlFiles) {
 		try {
-			if ( !sqlFile.isDirectory() )
-				executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
-			else {
-				for ( File file : sqlFile.listFiles() ) {
-					executeScript(new Scanner(file).useDelimiter("\\Z").next());
+			if ( sqlFiles == null )
+				return false;
+			for ( File sqlFile : sqlFiles ) {
+				if (!sqlFile.isDirectory())
+					executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
+				else {
+					for (File file : sqlFile.listFiles()) {
+						executeScript(new Scanner(file).useDelimiter("\\Z").next());
+					}
 				}
 			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		return true;
 	}
 }
