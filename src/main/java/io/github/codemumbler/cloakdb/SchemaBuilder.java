@@ -2,6 +2,8 @@ package io.github.codemumbler.cloakdb;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Scanner;
@@ -23,16 +25,38 @@ class SchemaBuilder {
 	}
 
 	void executeScript(String sqlScript) {
-		sqlScript = dialect.prepareSQL(sqlScript);
-		try (Connection connection = dataSource.getConnection();
-			 Statement statement = connection.createStatement()) {
+		dialect.enableSyntax(dataSource);
+		try (Connection connection = dataSource.getConnection()) {
 			connection.setAutoCommit(true);
-			String[] sqlStatements = sqlScript.split(DEFAULT_DELIMITER);
-			for ( String sql : sqlStatements ) {
-				sql = sql.trim();
-				if (sql.isEmpty() || sql.startsWith("--"))
+			LineNumberReader lineReader = new LineNumberReader(new StringReader(sqlScript));
+			String line;
+			StringBuilder sql = null;
+			int closeableStatements = 0;
+			while ((line = lineReader.readLine()) != null) {
+				line = dialect.prepareSQL(line.trim());
+				if ( sql == null )
+					sql = new StringBuilder();
+				if (line.isEmpty() || line.startsWith("--"))
 					continue;
-				statement.execute(sql);
+				else {
+					sql.append(line).append("\n");
+					if ( line.contains("FOR ") && !line.contains("END") )
+						closeableStatements++;
+					if ( line.contains("IF") && !line.contains("END IF") )
+						closeableStatements++;
+					if ( line.contains("END IF") )
+						closeableStatements--;
+					else if ( line.contains("END") )
+						closeableStatements--;
+				}
+				if ( line.endsWith(DEFAULT_DELIMITER) && closeableStatements == 0 ) {
+					Statement statement = connection.createStatement();
+					statement.execute(sql.toString());
+					statement.close();
+					sql = null;
+					closeableStatements = 0;
+				}
+
 			}
 		} catch (Exception e) {
 			throw new CloakDBException("Failed to execute SQL statement: " + e.getMessage());

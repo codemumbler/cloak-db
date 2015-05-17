@@ -14,8 +14,8 @@ import java.sql.Statement;
 public class CloakDatabaseTest {
 
 	private static final String JDBC_APP_DB = "jdbc/app_db";
-	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL )";
-	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + ";\nINSERT INTO test_table(id) VALUES (1);";
+	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL );";
+	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + "\nINSERT INTO test_table(id) VALUES (1);";
 	private static CloakDatabase database;
 
 	@BeforeClass

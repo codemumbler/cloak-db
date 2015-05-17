@@ -7,16 +7,19 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 
 public class SchemaBuilderTest {
 
 	private static final String JDBC_APP_DB = "jdbc/script_db";
-	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL )";
-	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + ";\nINSERT INTO test_table(id) VALUES (1);";
+	private static final String CREATE_TABLE = "CREATE TABLE test_table ( id INT NOT NULL );";
+	private static final String SIMPLE_DB_SCHEMA = CREATE_TABLE + "\nINSERT INTO test_table(id) VALUES (1);";
 
 	private static CloakDatabase db;
 	private SchemaBuilder schemaBuilder;
@@ -84,6 +87,24 @@ public class SchemaBuilderTest {
 	public void ignoreEmptyLines() throws Exception {
 		schemaBuilder.executeScript(SIMPLE_DB_SCHEMA + "\n");
 		Assert.assertEquals(1, queryTable(db.getDataSource()));
+	}
+
+	@Test
+	public void buildTrigger() {
+		schemaBuilder = new SchemaBuilder(db.getDataSource(), new OracleDialect());
+		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
+				"CREATE SEQUENCE test_seq MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 1 START WITH 264;\n" +
+				"CREATE OR REPLACE TRIGGER test_trig\n" +
+				"BEFORE INSERT ON test_table\n" +
+				"FOR EACH ROW BEGIN\n" +
+				"\tIF :NEW.id IS NULL THEN\n" +
+				"\t\tSELECT test_seq.nextVal\n" +
+				"\t\tINTO :NEW.id\n" +
+				"\t\tFROM dual;\n" +
+				"\tEND IF;\n" +
+				"END;\n" +
+				"/\n");
+//		Assert.assertEquals(1, queryTable(db.getDataSource()));
 	}
 
 	private int queryTable(DataSource dataSource) throws Exception {
