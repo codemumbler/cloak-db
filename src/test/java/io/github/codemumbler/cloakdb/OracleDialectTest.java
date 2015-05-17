@@ -70,6 +70,17 @@ public class OracleDialectTest {
 						"/\n"));
 	}
 
+	@Test
+	public void enableTrigger() {
+		Assert.assertEquals("", prepareSQL("ALTER TRIGGER test_trig ENABLE;"));
+	}
+
+	@Test
+	public void addConstraint() {
+		Assert.assertEquals("ALTER TABLE CANCELLATIONS ADD CONSTRAINT test_pk PRIMARY KEY (id);",
+				prepareSQL("ALTER TABLE CANCELLATIONS ADD CONSTRAINT test_pk PRIMARY KEY (id) ENABLE;"));
+	}
+
 	private String prepareSQL(String sql) {
 		return dialect.prepareSQL(sql);
 	}

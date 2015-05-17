@@ -36,7 +36,7 @@ class SchemaBuilder {
 				line = dialect.prepareSQL(line.trim());
 				if ( sql == null )
 					sql = new StringBuilder();
-				if (line.isEmpty() || line.startsWith("--"))
+				if (line.isEmpty() || line.startsWith("--") || line.startsWith("/"))
 					continue;
 				else {
 					sql.append(line).append("\n");
