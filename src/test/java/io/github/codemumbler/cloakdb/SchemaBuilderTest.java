@@ -74,6 +74,18 @@ public class SchemaBuilderTest {
 		Assert.assertFalse(schemaBuilder.executeScript((File[]) null));
 	}
 
+	@Test
+	public void ignoreComments() throws Exception {
+		schemaBuilder.executeScript(SIMPLE_DB_SCHEMA.replace("INSERT", "--INSERT"));
+		Assert.assertEquals(0, queryTable(db.getDataSource()));
+	}
+
+	@Test
+	public void ignoreEmptyLines() throws Exception {
+		schemaBuilder.executeScript(SIMPLE_DB_SCHEMA + "\n");
+		Assert.assertEquals(1, queryTable(db.getDataSource()));
+	}
+
 	private int queryTable(DataSource dataSource) throws Exception {
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {

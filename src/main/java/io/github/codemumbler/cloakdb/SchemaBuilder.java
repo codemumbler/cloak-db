@@ -29,6 +29,9 @@ class SchemaBuilder {
 			connection.setAutoCommit(true);
 			String[] sqlStatements = sqlScript.split(DEFAULT_DELIMITER);
 			for ( String sql : sqlStatements ) {
+				sql = sql.trim();
+				if (sql.isEmpty() || sql.startsWith("--"))
+					continue;
 				statement.execute(sql);
 			}
 		} catch (Exception e) {
