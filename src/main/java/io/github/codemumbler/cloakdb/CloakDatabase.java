@@ -47,6 +47,10 @@ public class CloakDatabase {
 		initializeDatabase();
 	}
 
+	public CloakDatabase(String jndiName, int dialect, File sql) {
+		this(jndiName, dialect, "", sql);
+	}
+
 	private void createSchema() {
 		if ( sqlFile == null && (initializationSQL == null || initializationSQL.isEmpty()) )
 			return;

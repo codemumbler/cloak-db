@@ -105,6 +105,14 @@ public class CloakDatabaseTest {
 		Assert.assertEquals(2, queryTable());
 	}
 
+	@Test
+	public void useAnOracleFile() throws Exception {
+		database.destroy();
+		database = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE,
+				new File(getClass().getClassLoader().getResource("simple-oracle.sql").toURI()));
+		Assert.assertEquals(3, queryTable());
+	}
+
 	private void reinitializeDB(String name, String SQL) {
 		database.destroy();
 		database = new CloakDatabase(name, SQL);
