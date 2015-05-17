@@ -39,7 +39,13 @@ class SchemaBuilder {
 
 	void executeScript(File sqlFile) {
 		try {
-			executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
+			if ( !sqlFile.isDirectory() )
+				executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
+			else {
+				for ( File file : sqlFile.listFiles() ) {
+					executeScript(new Scanner(file).useDelimiter("\\Z").next());
+				}
+			}
 		} catch (Exception e){
 			e.printStackTrace();
 		}

@@ -6,6 +6,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -48,6 +50,13 @@ public class SchemaBuilderTest {
 		schemaBuilder = new SchemaBuilder(db.getDataSource(), new OracleDialect());
 		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL );");
 		Assert.assertEquals(0, queryTable(db.getDataSource()));
+	}
+
+	@Test
+	public void runCompleteDirectory() throws Exception {
+		schemaBuilder = new SchemaBuilder(db.getDataSource(), new HSQLDBDialect());
+		schemaBuilder.executeScript(new File(getClass().getClassLoader().getResource("db/migration").toURI()));
+		Assert.assertEquals(2, queryTable(db.getDataSource()));
 	}
 
 	@Test(expected = CloakDBException.class)
