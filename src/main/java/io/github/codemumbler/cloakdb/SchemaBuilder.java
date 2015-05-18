@@ -26,30 +26,31 @@ class SchemaBuilder {
 
 	void executeScript(String sqlScript) {
 		dialect.enableSyntax(dataSource);
+		sqlScript = dialect.prepareSQL(sqlScript);
+		StringBuilder sql = null;
 		try (Connection connection = dataSource.getConnection()) {
 			connection.setAutoCommit(true);
 			LineNumberReader lineReader = new LineNumberReader(new StringReader(sqlScript));
 			String line;
-			StringBuilder sql = null;
 			int closeableStatements = 0;
 			while ((line = lineReader.readLine()) != null) {
-				line = dialect.prepareSQL(line.trim());
+				line = line.trim();
 				if ( sql == null )
 					sql = new StringBuilder();
 				if (line.isEmpty() || line.startsWith("--") || line.startsWith("/"))
 					continue;
 				else {
 					sql.append(line).append("\n");
-					if ( line.contains("FOR ") && !line.contains("END") )
+					if ( line.contains("FOR ") && !line.contains("END;") )
 						closeableStatements++;
-					if ( line.contains("IF") && !line.contains("END IF") )
+					else if ( line.contains("IF") && !line.contains("END IF;") )
 						closeableStatements++;
-					if ( line.contains("END IF") )
+					if ( line.contains("END IF;") )
 						closeableStatements--;
-					else if ( line.contains("END") )
+					else if ( line.contains("END;") )
 						closeableStatements--;
 				}
-				if ( line.endsWith(DEFAULT_DELIMITER) && closeableStatements == 0 ) {
+				if ( line.contains(DEFAULT_DELIMITER) && closeableStatements <= 0 ) {
 					Statement statement = connection.createStatement();
 					statement.execute(sql.toString());
 					statement.close();
@@ -59,7 +60,7 @@ class SchemaBuilder {
 
 			}
 		} catch (Exception e) {
-			throw new CloakDBException("Failed to execute SQL statement: " + e.getMessage());
+			throw new CloakDBException("Failed to execute SQL statement: " + sql.toString() + " because of " + e.getMessage());
 		}
 	}
 

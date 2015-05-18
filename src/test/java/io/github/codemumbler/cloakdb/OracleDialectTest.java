@@ -19,6 +19,11 @@ public class OracleDialectTest {
 	}
 
 	@Test
+	public void numberToDOUBLE() {
+		Assert.assertEquals("id DOUBLE", prepareSQL("id NUMBER(9,2)"));
+	}
+
+	@Test
 	public void VARCHAR2() {
 		Assert.assertEquals("label VARCHAR(100)", prepareSQL("label VARCHAR2(100)"));
 	}
@@ -79,6 +84,22 @@ public class OracleDialectTest {
 	public void addConstraint() {
 		Assert.assertEquals("ALTER TABLE CANCELLATIONS ADD CONSTRAINT test_pk PRIMARY KEY (id);",
 				prepareSQL("ALTER TABLE CANCELLATIONS ADD CONSTRAINT test_pk PRIMARY KEY (id) ENABLE;"));
+	}
+
+	@Test
+	public void plsqlBlock() {
+		Assert.assertEquals("create procedure temp1() MODIFIES SQL DATA\nBEGIN ATOMIC\n" +
+				"\tDECLARE\nstr VARCHAR(32767);\n\n" +
+				"\tSET str = '';\n" +
+				"UPDATE test_table SET test_column = str;\n" +
+				"END;\nCALL temp1();\nDROP PROCEDURE temp1;\n",
+				prepareSQL("DECLARE\n" +
+				"str varchar2(32767);\n" +
+				"BEGIN\n" +
+				"\tstr := '';\n" +
+				"UPDATE test_table SET test_column = str;\n" +
+				"END;\n" +
+				"/"));
 	}
 
 	private String prepareSQL(String sql) {

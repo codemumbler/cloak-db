@@ -107,6 +107,15 @@ public class SchemaBuilderTest {
 //		Assert.assertEquals(1, queryTable(db.getDataSource()));
 	}
 
+	@Test
+	public void executeBEGINBlock() throws Exception {
+		schemaBuilder.executeScript(SIMPLE_DB_SCHEMA + "\n" +
+				"\tcreate procedure temp1() MODIFIES SQL DATA \nBEGIN ATOMIC\n DECLARE test_var VARCHAR(2);\n"+
+				"\tINSERT INTO test_table(id) VALUES (2); END;\ncall temp1();\ndrop procedure temp1;" +
+				"");
+		Assert.assertEquals(2, queryTable(db.getDataSource()));
+	}
+
 	private int queryTable(DataSource dataSource) throws Exception {
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {
