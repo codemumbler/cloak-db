@@ -21,14 +21,14 @@ public class CloakDatabase {
 	private final File sqlFile;
 
 	public CloakDatabase(String jndiName) {
-		this(jndiName, "", HSQLDB);
+		this(jndiName, HSQLDB, "");
 	}
 
 	public CloakDatabase(String jndiName, String initializeSQL) {
-		this(jndiName, initializeSQL, HSQLDB);
+		this(jndiName, HSQLDB, initializeSQL);
 	}
 
-	public CloakDatabase(String jndiName, String initializeSQL, int dialect) {
+	public CloakDatabase(String jndiName, int dialect, String initializeSQL) {
 		this(jndiName, dialect, initializeSQL, null);
 	}
 

@@ -7,11 +7,8 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 

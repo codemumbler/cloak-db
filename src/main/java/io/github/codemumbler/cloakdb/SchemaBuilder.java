@@ -60,6 +60,8 @@ class SchemaBuilder {
 
 			}
 		} catch (Exception e) {
+			if ( sql == null )
+				sql = new StringBuilder();
 			throw new CloakDBException("Failed to execute SQL statement: " + sql.toString() + " because of " + e.getMessage());
 		}
 	}
@@ -72,7 +74,10 @@ class SchemaBuilder {
 				if (!sqlFile.isDirectory())
 					executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
 				else {
-					for (File file : sqlFile.listFiles()) {
+					File[] files = sqlFile.listFiles();
+					if ( files == null )
+						continue;
+					for (File file : files ) {
 						executeScript(new Scanner(file).useDelimiter("\\Z").next());
 					}
 				}

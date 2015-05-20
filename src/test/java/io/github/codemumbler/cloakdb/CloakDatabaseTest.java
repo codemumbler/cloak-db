@@ -92,8 +92,9 @@ public class CloakDatabaseTest {
 	@Test
 	public void useOracleSQL() throws Exception {
 		database.destroy();
-		database = new CloakDatabase(JDBC_APP_DB, "CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
-				"INSERT INTO test_table(id) VALUES (1);", CloakDatabase.ORACLE);
+		database = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE,
+				"CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
+				"INSERT INTO test_table(id) VALUES (1);");
 		Assert.assertEquals(1, queryTable());
 	}
 
