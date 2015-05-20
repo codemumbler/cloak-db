@@ -13,13 +13,13 @@ class CloakJNDI {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, CONTEXT_FACTORY);
 	}
 
-	CloakJNDI(){
+	CloakJNDI() {
 		try {
 			InitialContext ic = new InitialContext();
 			if (ic.lookup(DEFAULT_ENV_CONTEXT) == null) {
 				ic.createSubcontext(DEFAULT_ENV_CONTEXT);
 			}
-		} catch (NamingException e){
+		} catch (NamingException e) {
 			throw new CloakDBException("Failed to establish an InitialContext.");
 		}
 	}

@@ -29,7 +29,7 @@ class OracleDialect implements Dialect {
 	@Override
 	public void enableSyntax(DataSource dataSource) {
 		try (Connection connection = dataSource.getConnection();
-			Statement statement = connection.createStatement()){
+			 Statement statement = connection.createStatement()) {
 			statement.execute("SET DATABASE SQL SYNTAX ORA TRUE");
 		} catch (SQLException e) {
 			e.printStackTrace();

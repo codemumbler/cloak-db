@@ -35,22 +35,22 @@ class SchemaBuilder {
 			int closeableStatements = 0;
 			while ((line = lineReader.readLine()) != null) {
 				line = line.trim();
-				if ( sql == null )
+				if (sql == null)
 					sql = new StringBuilder();
 				if (line.isEmpty() || line.startsWith("--") || line.startsWith("/"))
 					continue;
 				else {
 					sql.append(line).append("\n");
-					if ( line.contains("FOR ") && !line.contains("END;") )
+					if (line.contains("FOR ") && !line.contains("END;"))
 						closeableStatements++;
-					else if ( line.contains("IF") && !line.contains("END IF;") )
+					else if (line.contains("IF") && !line.contains("END IF;"))
 						closeableStatements++;
-					if ( line.contains("END IF;") )
+					if (line.contains("END IF;"))
 						closeableStatements--;
-					else if ( line.contains("END;") )
+					else if (line.contains("END;"))
 						closeableStatements--;
 				}
-				if ( line.contains(DEFAULT_DELIMITER) && closeableStatements <= 0 ) {
+				if (line.contains(DEFAULT_DELIMITER) && closeableStatements <= 0) {
 					Statement statement = connection.createStatement();
 					statement.execute(sql.toString());
 					statement.close();
@@ -60,29 +60,29 @@ class SchemaBuilder {
 
 			}
 		} catch (Exception e) {
-			if ( sql == null )
+			if (sql == null)
 				sql = new StringBuilder();
 			throw new CloakDBException("Failed to execute SQL statement: " + sql.toString() + " because of " + e.getMessage());
 		}
 	}
 
-	boolean executeScript(File ... sqlFiles) {
+	boolean executeScript(File... sqlFiles) {
 		try {
-			if ( sqlFiles == null )
+			if (sqlFiles == null)
 				return false;
-			for ( File sqlFile : sqlFiles ) {
+			for (File sqlFile : sqlFiles) {
 				if (!sqlFile.isDirectory())
 					executeScript(new Scanner(sqlFile).useDelimiter("\\Z").next());
 				else {
 					File[] files = sqlFile.listFiles();
-					if ( files == null )
+					if (files == null)
 						continue;
-					for (File file : files ) {
+					for (File file : files) {
 						executeScript(new Scanner(file).useDelimiter("\\Z").next());
 					}
 				}
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return true;

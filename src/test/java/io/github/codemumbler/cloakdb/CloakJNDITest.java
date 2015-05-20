@@ -51,7 +51,7 @@ public class CloakJNDITest {
 		jndi.bind(DATABASE_JNDI_NAME, expected);
 		Assert.assertEquals(expected, jndi.lookup(DATABASE_JNDI_NAME));
 	}
-	
+
 	@Test
 	public void unbind() {
 		jndi.bind(DATABASE_JNDI_NAME, new Object());
@@ -60,7 +60,7 @@ public class CloakJNDITest {
 	}
 
 	@Test(expected = CloakDBException.class)
-	 public void failToBindInitialContext() throws NamingException {
+	public void failToBindInitialContext() throws NamingException {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockContextFactory.class.getCanonicalName());
 		jndi = new CloakJNDI();
 	}

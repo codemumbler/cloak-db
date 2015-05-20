@@ -7,10 +7,10 @@ public abstract class CloakAbstractTestCase {
 	private static CloakDatabase db;
 
 	CloakAbstractTestCase() {
-		if ( db != null ) {
+		if (db != null) {
 			db.destroy();
 		}
-		if ( schemaFile() == null )
+		if (schemaFile() == null)
 			db = new CloakDatabase(jdbcName(), dialect(), schemaSQL());
 		else
 			db = new CloakDatabase(jdbcName(), dialect(), schemaFile());
