@@ -49,6 +49,18 @@ public class CloakAbstractTestCaseTest {
 		tests.runFileTest();
 	}
 
+	@Test
+	public void useFilesToBuildInitialSchema() throws Exception {
+		CloakMultiFileAbstractTestCase tests = new CloakMultiFileAbstractTestCase();
+		tests.runMultiFileTest();
+	}
+
+	@Test
+	public void nonInitializedSchema() throws Exception {
+		PlainCloakAbstractTestCase tests = new PlainCloakAbstractTestCase();
+		tests.runQueryTest();
+	}
+
 	private class CloakAbstractTestCase extends io.github.codemumbler.cloakdb.CloakAbstractTestCase {
 
 		private static final String CREATE_SCHEMA =
@@ -74,6 +86,19 @@ public class CloakAbstractTestCaseTest {
 
 		public void tearDown() {
 			super.reset();
+		}
+	}
+
+	private class PlainCloakAbstractTestCase extends io.github.codemumbler.cloakdb.CloakAbstractTestCase {
+
+		@Override
+		protected String jdbcName() {
+			return "jdbc/simple_db";
+		}
+
+		public void runQueryTest() throws Exception {
+			productionCode.initializeDatabase();
+			Assert.assertEquals(2, productionCode.runQuery());
 		}
 	}
 
@@ -109,9 +134,36 @@ public class CloakAbstractTestCaseTest {
 		}
 
 		@Override
-		protected File schemaFile() {
+		protected File[] schemaFile() {
 			try {
-				return new File(getClass().getClassLoader().getResource("db/migration").toURI());
+				return new File[]{
+						new File(getClass().getClassLoader().getResource("db/migration").toURI())
+				};
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected String jdbcName() {
+			return "jdbc/simple_db";
+		}
+	}
+
+	private class CloakMultiFileAbstractTestCase extends CloakAbstractTestCase {
+
+		public void runMultiFileTest() throws Exception {
+			Assert.assertEquals(2, productionCode.runQuery());
+		}
+
+		@Override
+		protected File[] schemaFile() {
+			try {
+				return new File[]{
+						new File(getClass().getClassLoader().getResource("db/migration/V1_1__create_table.sql").toURI()),
+						new File(getClass().getClassLoader().getResource("db/migration/V1_2__insert_data.sql").toURI())
+				};
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}

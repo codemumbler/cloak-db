@@ -4,6 +4,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -14,6 +15,12 @@ public class MockProductionCode {
 		Context context = new InitialContext();
 		Context envContext = (Context) context.lookup("java:/comp/env");
 		return (DataSource) envContext.lookup("jdbc/simple_db");
+	}
+
+	public void initializeDatabase() throws Exception {
+		SchemaBuilder builder = new SchemaBuilder(getDataSource());
+		File dbMigrationDirectory = new File(getClass().getClassLoader().getResource("db/migration").toURI());
+		builder.executeScript(dbMigrationDirectory);
 	}
 
 	public int runQuery() throws Exception {

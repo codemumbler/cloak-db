@@ -22,7 +22,7 @@ public class CloakDatabase {
 	private final CloakJNDI jndi;
 	private final String initializationSQL;
 	private final int dialect;
-	private final File sqlFile;
+	private final File[] sqlFiles;
 
 	/**
 	 * Initialize the in-memory database with no structure and using HSQLDB syntax.
@@ -48,34 +48,34 @@ public class CloakDatabase {
 	 * @param initializeSQL the initialization SQL statements.
 	 */
 	public CloakDatabase(String jndiName, int dialect, String initializeSQL) {
-		this(jndiName, dialect, initializeSQL, null);
+		this(jndiName, dialect, initializeSQL, new File[]{});
 	}
 
 	/**
 	 * Initialize the in-memory database with a SQL file using HSQLDB syntax.
 	 * @param jndiName the jndi db name.
-	 * @param file a SQL file to initialize the db.
+	 * @param sqlFiles a SQL file to initialize the db.
 	 */
-	public CloakDatabase(String jndiName, File file) {
-		this(jndiName, HSQLDB, "", file);
+	public CloakDatabase(String jndiName, File ... sqlFiles) {
+		this(jndiName, HSQLDB, "", sqlFiles);
 	}
 
 	/**
 	 * Initialize the in-memory database with a SQL file using a specific syntax/dialect.
 	 * @param jndiName the jndi db name.
 	 * @param dialect the SQL syntax to use.
-	 * @param sql a SQL file to initialize the db.
+	 * @param sqlFiles a SQL file to initialize the db.
 	 */
-	public CloakDatabase(String jndiName, int dialect, File sql) {
-		this(jndiName, dialect, "", sql);
+	public CloakDatabase(String jndiName, int dialect, File ... sqlFiles) {
+		this(jndiName, dialect, "", sqlFiles);
 	}
 
-	private CloakDatabase(String jndiName, int dialect, String initializationSQL, File sqlFile) {
+	private CloakDatabase(String jndiName, int dialect, String initializationSQL, File ... sqlFiles) {
 		this.jndiName = jndiName;
 		this.jndi = new CloakJNDI();
 		this.dialect = dialect;
 		this.initializationSQL = initializationSQL;
-		this.sqlFile = sqlFile;
+		this.sqlFiles = sqlFiles;
 		if (jndi.lookup(this.jndiName) != null)
 			throw new CloakDBException("Database is already initialized. Please use destroy() first.");
 		initializeDatabase();
@@ -98,15 +98,16 @@ public class CloakDatabase {
 	}
 
 	private void createSchema() {
-		if (sqlFile == null && (initializationSQL == null || initializationSQL.isEmpty()))
+		if ((sqlFiles == null || sqlFiles.length == 0) &&
+				(initializationSQL == null || initializationSQL.isEmpty()))
 			return;
 		SchemaBuilder schemaBuilder;
 		if (dialect == ORACLE)
 			schemaBuilder = new SchemaBuilder(getDataSource(), new OracleDialect());
 		else
 			schemaBuilder = new SchemaBuilder(getDataSource());
-		if (sqlFile != null)
-			schemaBuilder.executeScript(this.sqlFile);
+		if (sqlFiles != null && sqlFiles.length > 0)
+			schemaBuilder.executeScript(this.sqlFiles);
 		else
 			schemaBuilder.executeScript(this.initializationSQL);
 	}

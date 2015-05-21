@@ -13,7 +13,7 @@ public abstract class CloakAbstractTestCase {
 		if (db != null) {
 			db.destroy();
 		}
-		if (schemaFile() == null)
+		if (schemaFile() == null || schemaFile().length == 0)
 			db = new CloakDatabase(jdbcName(), dialect(), schemaSQL());
 		else
 			db = new CloakDatabase(jdbcName(), dialect(), schemaFile());
@@ -39,7 +39,7 @@ public abstract class CloakAbstractTestCase {
 	 * The SQL script File to initialize database schema.
 	 * @return
 	 */
-	protected File schemaFile() {
+	protected File[] schemaFile() {
 		return null;
 	}
 

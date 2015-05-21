@@ -114,6 +114,24 @@ public class CloakDatabaseTest {
 		Assert.assertEquals(3, queryTable());
 	}
 
+	@Test
+	public void useMultipleFiles() throws Exception {
+		database.destroy();
+		File file1 = new File(getClass().getClassLoader().getResource("db/migration/V1_1__create_table.sql").toURI());
+		File file2 = new File(getClass().getClassLoader().getResource("db/migration/V1_2__insert_data.sql").toURI());
+		database = new CloakDatabase(JDBC_APP_DB, file1, file2);
+		Assert.assertEquals(2, queryTable());
+	}
+
+	@Test
+	public void useMultipleFilesAndDialect() throws Exception {
+		database.destroy();
+		File file1 = new File(getClass().getClassLoader().getResource("simple-oracle.sql").toURI());
+		File file2 = new File(getClass().getClassLoader().getResource("oracle2.sql").toURI());
+		database = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE, file1, file2);
+		Assert.assertEquals(2, queryTable());
+	}
+
 	private void reinitializeDB(String name, String SQL) {
 		database.destroy();
 		database = new CloakDatabase(name, SQL);
