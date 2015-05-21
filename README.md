@@ -1,12 +1,11 @@
 # cloak-db
-Manages JNDI and an in memory db so you can concentrate on clean DataSource unit tests.
+Manages JNDI and an in memory db so you can concentrate on writing quick, clean DataSource unit tests.
 
 Include the dependency using Maven:
 ```
-  <dependency>
+  	<dependency>
 	  <groupId>io.github.codemumbler</groupId>
 	  <artifactId>cloak-db</artifactId>
-	  <version>1.0-SNAPSHOT</version>
 	  <scope>test</scope>
 	</dependency>
 ```
