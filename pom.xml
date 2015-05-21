@@ -8,7 +8,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>
-		Manages JNDI and an in memory db so you can concentrate on fast, clean DataSource unit tests.
+		Manages JNDI and an in memory db so you can concentrate on writing quick, clean DataSource unit tests.
 	</description>
 	<url>https://github.com/codemumbler/cloak-db</url>
 	<licenses>
