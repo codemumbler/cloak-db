@@ -39,22 +39,20 @@ Then choose one of two ways to manage the mock database.
     ...
     
     @BeforeClass
-	  public static void setUpClass() {
-		  database = new CloakDatabase("jdbc/myDBName);
-	  }
-
-	  @After
-	  public void tearDown() {
-		  database.reset();
-	  }
-	  
-	  ...
+    public static void setUpClass() {
+    	database = new CloakDatabase("jdbc/myDBName);
+    }
+    
+    @After
+    public void tearDown() {
+    	database.reset();
+    }
+    ...
     
     @Test
     public void testDBAction() {
       productionClass.doSomethingWithDatabase();
     }
-    
     ...
   }
 ```
