@@ -13,4 +13,9 @@ class HSQLDBDialect implements Dialect {
 	public void enableSyntax(DataSource dataSource) {
 
 	}
+
+	@Override
+	public void disableSyntax(DataSource dataSource) {
+
+	}
 }

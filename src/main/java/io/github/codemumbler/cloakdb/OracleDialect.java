@@ -35,4 +35,14 @@ class OracleDialect implements Dialect {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void disableSyntax(DataSource dataSource) {
+		try (Connection connection = dataSource.getConnection();
+			 Statement statement = connection.createStatement()) {
+			statement.execute("SET DATABASE SQL SYNTAX ORA FALSE");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

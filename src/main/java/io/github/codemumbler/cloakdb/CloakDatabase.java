@@ -21,7 +21,7 @@ public class CloakDatabase {
 	private final String jndiName;
 	private final CloakJNDI jndi;
 	private final String initializationSQL;
-	private final int dialect;
+	private final Dialect dialect;
 	private final File[] sqlFiles;
 
 	/**
@@ -73,7 +73,10 @@ public class CloakDatabase {
 	private CloakDatabase(String jndiName, int dialect, String initializationSQL, File ... sqlFiles) {
 		this.jndiName = jndiName;
 		this.jndi = new CloakJNDI();
-		this.dialect = dialect;
+		if (dialect == ORACLE)
+			this.dialect = new OracleDialect();
+		else
+			this.dialect = new HSQLDBDialect();
 		this.initializationSQL = initializationSQL;
 		this.sqlFiles = sqlFiles;
 		if (jndi.lookup(this.jndiName) != null)
@@ -93,6 +96,7 @@ public class CloakDatabase {
 	 * Drop the schema and unbind it from the jndi context.
 	 */
 	public void destroy() {
+		dialect.disableSyntax(getDataSource());
 		dropDatabase();
 		jndi.unbind(jndiName);
 	}
@@ -101,11 +105,7 @@ public class CloakDatabase {
 		if ((sqlFiles == null || sqlFiles.length == 0) &&
 				(initializationSQL == null || initializationSQL.isEmpty()))
 			return;
-		SchemaBuilder schemaBuilder;
-		if (dialect == ORACLE)
-			schemaBuilder = new SchemaBuilder(getDataSource(), new OracleDialect());
-		else
-			schemaBuilder = new SchemaBuilder(getDataSource());
+		SchemaBuilder schemaBuilder = new SchemaBuilder(getDataSource(), dialect);
 		if (sqlFiles != null && sqlFiles.length > 0)
 			schemaBuilder.executeScript(this.sqlFiles);
 		else
@@ -116,6 +116,7 @@ public class CloakDatabase {
 		if (jndi.lookup(this.jndiName) == null) {
 			jndi.bind(jndiName, getDataSource());
 			createSchema();
+			dialect.enableSyntax(getDataSource());
 		}
 	}
 

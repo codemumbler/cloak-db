@@ -88,6 +88,8 @@ public class SchemaBuilderTest {
 
 	@Test
 	public void buildTrigger() {
+		db.destroy();
+		db = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE, "");
 		schemaBuilder = new SchemaBuilder(db.getDataSource(), new OracleDialect());
 		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
 				"CREATE SEQUENCE test_seq MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 1 START WITH 264;\n" +

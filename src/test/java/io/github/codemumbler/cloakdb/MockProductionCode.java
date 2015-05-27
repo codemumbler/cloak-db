@@ -41,4 +41,13 @@ public class MockProductionCode {
 			statement.executeUpdate("INSERT INTO test_table(id) VALUES (2);");
 		}
 	}
+
+	public void createNewOracleTable() throws Exception {
+		try (Connection connection = getDataSource().getConnection();
+			 Statement statement = connection.createStatement()) {
+			statement.executeUpdate("CREATE TABLE TEST_TABLE2 (" +
+					" TEST_COLUMN_ID NUMBER(5) " +
+					");");
+		}
+	}
 }

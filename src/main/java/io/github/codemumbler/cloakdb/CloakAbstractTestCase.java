@@ -1,6 +1,9 @@
 package io.github.codemumbler.cloakdb;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Extend test classes with this class for automated jndi and in-memory database management.
