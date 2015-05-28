@@ -87,11 +87,11 @@ public class SchemaBuilderTest {
 	}
 
 	@Test
-	public void buildTrigger() {
+	public void buildTrigger() throws Exception {
 		db.destroy();
 		db = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE, "");
 		schemaBuilder = new SchemaBuilder(db.getDataSource(), new OracleDialect());
-		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL );\n" +
+		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL, name VARCHAR2(5) );\n" +
 				"CREATE SEQUENCE test_seq MINVALUE 1 MAXVALUE 999999999 INCREMENT BY 1 START WITH 264;\n" +
 				"CREATE OR REPLACE TRIGGER test_trig\n" +
 				"BEFORE INSERT ON test_table\n" +
@@ -102,8 +102,8 @@ public class SchemaBuilderTest {
 				"\t\tFROM dual;\n" +
 				"\tEND IF;\n" +
 				"END;\n" +
-				"/\n");
-//		Assert.assertEquals(1, queryTable(db.getDataSource()));
+				"/\nINSERT INTO test_table (name) VALUES ('name1');");
+		Assert.assertEquals(1, queryTable(db.getDataSource(), "SELECT id FROM test_table WHERE name = 'name1'"));
 	}
 
 	@Test
@@ -116,9 +116,13 @@ public class SchemaBuilderTest {
 	}
 
 	private int queryTable(DataSource dataSource) throws Exception {
+		return queryTable(dataSource, "SELECT * FROM test_table");
+	}
+
+	private int queryTable(DataSource dataSource, String sql) throws Exception {
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {
-			ResultSet set = statement.executeQuery("SELECT * FROM test_table");
+			ResultSet set = statement.executeQuery(sql);
 			int count = 0;
 			while ( set.next() )
 				count++;
