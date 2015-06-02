@@ -46,6 +46,8 @@ public class SchemaBuilderTest {
 
 	@Test
 	public void runOracleSQL() throws Exception {
+		db.destroy();
+		db = new CloakDatabase(JDBC_APP_DB, CloakDatabase.ORACLE, "");
 		schemaBuilder = new SchemaBuilder(db.getDataSource(), new OracleDialect());
 		schemaBuilder.executeScript("CREATE TABLE test_table ( id NUMBER(5) NOT NULL );");
 		Assert.assertEquals(0, queryTable(db.getDataSource()));

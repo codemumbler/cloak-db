@@ -17,7 +17,7 @@ class CloakConnection implements Connection {
 
 	@Override
 	public Statement createStatement() throws SQLException {
-		return new CloakStatement(connection.createStatement());
+		return new CloakStatement(connection.createStatement(), dialect);
 	}
 
 	@Override

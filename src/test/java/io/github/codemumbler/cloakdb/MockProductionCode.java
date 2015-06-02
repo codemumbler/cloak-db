@@ -65,4 +65,19 @@ public class MockProductionCode {
 			statement.execute();
 		}
 	}
+
+	public void createTrigger() throws Exception {
+		try (Connection connection = getDataSource().getConnection();
+			 Statement statement = connection.createStatement()) {
+			statement.execute("CREATE OR REPLACE TRIGGER test_trig\n" +
+					"\t\tBEFORE INSERT ON test_table2\n" +
+					"\t\tFOR EACH ROW BEGIN\n" +
+					"\t\tIF :NEW.TEST_COLUMN_ID IS NULL THEN\n" +
+					"\t\tSELECT 1\n" +
+					"\t\tINTO :NEW.TEST_COLUMN_ID\n" +
+					"\t\tFROM dual;\n" +
+					"\t\tEND IF;\n" +
+					"\t\tEND;");
+		}
+	}
 }

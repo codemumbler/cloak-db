@@ -4,9 +4,11 @@ import java.sql.*;
 
 class CloakStatement implements Statement {
 
-	private Statement statement;
+	private final Dialect dialect;
+	private final Statement statement;
 
-	CloakStatement(Statement statement) {
+	CloakStatement(Statement statement, Dialect dialect) {
+		this.dialect = dialect;
 		this.statement = statement;
 	}
 
@@ -82,6 +84,7 @@ class CloakStatement implements Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
+		sql = dialect.prepareSQL(sql);
 		return statement.execute(sql);
 	}
 

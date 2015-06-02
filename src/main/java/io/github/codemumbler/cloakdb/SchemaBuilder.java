@@ -25,7 +25,6 @@ class SchemaBuilder {
 	}
 
 	void executeScript(String sqlScript) {
-		sqlScript = dialect.prepareSQL(sqlScript);
 		StringBuilder sql = null;
 		try (Connection connection = dataSource.getConnection()) {
 			connection.setAutoCommit(true);

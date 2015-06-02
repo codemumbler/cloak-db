@@ -69,6 +69,12 @@ public class CloakAbstractTestCaseTest {
 	}
 
 	@Test
+	public void createOracleTriggerAtRuntime() throws Exception {
+		CloakDialectCreationAbstractTestCase tests = new CloakDialectCreationAbstractTestCase();
+		tests.createTrigger();
+	}
+
+	@Test
 	public void useAFileToBuildInitialSchema() throws Exception {
 		CloakFileAbstractTestCase tests = new CloakFileAbstractTestCase();
 		tests.runFileTest();
@@ -139,6 +145,11 @@ public class CloakAbstractTestCaseTest {
 			Assert.assertEquals(5, runQuery());
 		}
 
+		public void createTrigger() throws Exception {
+			productionCode.createNewOracleTable();
+			productionCode.createTrigger();
+		}
+
 		private int runQuery() throws Exception {
 			try (Connection connection = getDataSource().getConnection();
 				 Statement statement = connection.createStatement()) {
@@ -160,6 +171,8 @@ public class CloakAbstractTestCaseTest {
 		protected String jdbcName() {
 			return JDBC_SIMPLE_DB;
 		}
+
+
 	}
 
 	private class CloakDialectAbstractTestCase extends CloakAbstractTestCase {
