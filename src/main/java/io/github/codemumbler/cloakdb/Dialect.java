@@ -9,4 +9,6 @@ interface Dialect {
 	void enableSyntax(DataSource dataSource);
 
 	void disableSyntax(DataSource dataSource);
+
+	CloakPrepareCall prepareCall(String sql);
 }

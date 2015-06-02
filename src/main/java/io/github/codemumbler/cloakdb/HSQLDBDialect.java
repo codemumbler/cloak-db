@@ -18,4 +18,9 @@ class HSQLDBDialect implements Dialect {
 	public void disableSyntax(DataSource dataSource) {
 
 	}
+
+	@Override
+	public CloakPrepareCall prepareCall(String sql) {
+		return new CloakPrepareCall();
+	}
 }

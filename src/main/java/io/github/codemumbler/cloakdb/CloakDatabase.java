@@ -121,9 +121,9 @@ public class CloakDatabase {
 	}
 
 	DataSource getDataSource() {
-		JDBCDataSource dataSource = (JDBCDataSource) jndi.lookup(this.jndiName);
+		CloakDataSource dataSource = (CloakDataSource) jndi.lookup(this.jndiName);
 		if (dataSource == null) {
-			dataSource = new JDBCDataSource();
+			dataSource = new CloakDataSource(new JDBCDataSource(), dialect);
 			dataSource.setDatabaseName("jdbc:hsqldb:mem:" + jndiName);
 			try {
 				dataSource.getConnection();
@@ -136,7 +136,7 @@ public class CloakDatabase {
 
 	private void dropDatabase() {
 		jndi.unbind(jndiName);
-		JDBCDataSource dataSource = (JDBCDataSource) getDataSource();
+		CloakDataSource dataSource = (CloakDataSource) getDataSource();
 		try (Connection connection = dataSource.getConnection();
 			 Statement statement = connection.createStatement()) {
 			statement.execute(DROP_SCHEMA);

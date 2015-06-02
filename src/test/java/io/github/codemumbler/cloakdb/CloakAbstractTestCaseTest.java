@@ -63,6 +63,12 @@ public class CloakAbstractTestCaseTest {
 	}
 
 	@Test
+	public void executeSimplePLSQL() throws Exception {
+		CloakDialectCreationAbstractTestCase tests = new CloakDialectCreationAbstractTestCase();
+		tests.runPLSQLBlock();
+	}
+
+	@Test
 	public void useAFileToBuildInitialSchema() throws Exception {
 		CloakFileAbstractTestCase tests = new CloakFileAbstractTestCase();
 		tests.runFileTest();
@@ -126,6 +132,11 @@ public class CloakAbstractTestCaseTest {
 		public void runCreateTable() throws Exception {
 			productionCode.createNewOracleTable();
 			Assert.assertEquals(0, runQuery());
+		}
+
+		public void runPLSQLBlock() throws Exception {
+			productionCode.executeSimplePLSQL();
+			Assert.assertEquals(5, runQuery());
 		}
 
 		private int runQuery() throws Exception {

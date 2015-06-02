@@ -5,6 +5,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.File;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -48,6 +49,20 @@ public class MockProductionCode {
 			statement.executeUpdate("CREATE TABLE TEST_TABLE2 (" +
 					" TEST_COLUMN_ID NUMBER(5) " +
 					");");
+		}
+	}
+
+	public void executeSimplePLSQL() throws Exception {
+		createNewOracleTable();
+		try (Connection connection = getDataSource().getConnection();
+			 CallableStatement statement = connection.prepareCall("BEGIN\n" +
+					 "INSERT INTO TEST_TABLE2(TEST_COLUMN_ID) VALUES (1);\n" +
+					 "INSERT INTO TEST_TABLE2(TEST_COLUMN_ID) VALUES (2);\n" +
+					 "INSERT INTO TEST_TABLE2(TEST_COLUMN_ID) VALUES (3);\n" +
+					 "INSERT INTO TEST_TABLE2(TEST_COLUMN_ID) VALUES (4);\n" +
+					 "INSERT INTO TEST_TABLE2(TEST_COLUMN_ID) VALUES (5);\n" +
+					 "END;")) {
+			statement.execute();
 		}
 	}
 }
