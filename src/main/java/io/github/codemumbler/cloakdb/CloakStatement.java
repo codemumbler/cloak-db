@@ -84,8 +84,10 @@ class CloakStatement implements Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
-		sql = dialect.prepareSQL(sql);
-		return statement.execute(sql);
+		String sql2 = dialect.prepareSQL(sql);
+		if (sql2.trim().isEmpty())
+			return true;
+		return statement.execute(sql2);
 	}
 
 	@Override

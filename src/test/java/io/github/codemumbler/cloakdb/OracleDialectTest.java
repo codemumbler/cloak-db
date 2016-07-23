@@ -53,16 +53,13 @@ public class OracleDialectTest {
 
 	@Test
 	public void oracleTriggers() {
-		Assert.assertEquals("CREATE OR REPLACE TRIGGER test_trig\n" +
+		Assert.assertEquals("CREATE TRIGGER test_trig\n" +
 						"BEFORE INSERT ON test_table\n" +
 						"REFERENCING NEW AS newrow FOR EACH ROW BEGIN ATOMIC\n" +
 						"\tIF newrow.id IS NULL THEN\n" +
-						"\t\tSELECT test_seq.nextVal\n" +
-						"\t\tINTO newrow.id\n" +
-						"\t\tFROM dual;\n" +
+						"\t\tSET newrow.id = NEXT VALUE FOR test_seq;\n" +
 						"\tEND IF;\n" +
-						"END;\n" +
-						"/\n",
+						"END;\n/\n",
 				prepareSQL("CREATE OR REPLACE TRIGGER test_trig\n" +
 						"BEFORE INSERT ON test_table\n" +
 						"FOR EACH ROW BEGIN\n" +

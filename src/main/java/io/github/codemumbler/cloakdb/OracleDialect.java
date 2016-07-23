@@ -17,7 +17,9 @@ class OracleDialect implements Dialect {
 		sql = sql.replaceAll("(?i)\\s+(NOCACHE|NOORDER)", "");
 		sql = sql.replaceAll("(?i)FOR\\s+EACH", "REFERENCING NEW AS newrow FOR EACH");
 		sql = sql.replaceAll("(?i)\\s+:NEW", " newrow");
-		sql = sql.replaceAll("(?i)ALTER TRIGGER [_A-Z]+ ENABLE;", "");
+		sql = sql.replaceAll("(?i)ALTER\\s+TRIGGER\\s+[_A-Z]+\\s+ENABLE;", "");
+		sql = sql.replaceAll("(?i)CREATE\\s+OR\\s+REPLACE", "CREATE");
+		sql = sql.replaceAll("(?i)(CREATE\\s+TRIGGER[\\s\\w]*?IF.*?THEN\\s+)(SELECT\\s+(.*?).NEXTVAL\\s+INTO\\s+(.*?)\\s+FROM\\s+dual)", "$1SET $4 = NEXT VALUE FOR $3");
 		sql = sql.replaceAll("(?i)\\s+ENABLE", "");
 		sql = sql.replaceAll("(?i)(DECLARE\\s+[\\s0-9A-Z_\\(\\)]*?;)\\s+BEGIN([\\s\\S\\.\\|\\(\\)/\\-#\\$,A-Z0-9:='\";_]*?)END;(\\s+/)?",
 				"create procedure temp1() MODIFIES SQL DATA\nBEGIN ATOMIC\n\t$1\n$2END;\nCALL temp1();\nDROP PROCEDURE temp1;\n");
